@@ -32,6 +32,7 @@ public class Main {
                 case "q":
                     System.out.println("키오스크 종료");
                     break;
+                    
 
             }
         }
