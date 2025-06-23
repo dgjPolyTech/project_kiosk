@@ -6,7 +6,7 @@ public class Main {
         System.out.println("도마트 푸드코트에 오신 걸 환영 합니다!\n");
 
         while(true){
-            System.out.println("원하는 음식점의 번호를 입력해주십시오dhdhdhdhdh.");
+            System.out.println("원하는 음식점의 번호를 입력해주십시오");
             System.out.println("=================================");
             System.out.println("(1)우리집 밥상(한식)");
             System.out.println("(2)카츠 앤 스시(일식)");
