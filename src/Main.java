@@ -17,12 +17,16 @@ public class Main {
             System.out.println("[장바구니 목록]");
 
             while (true) {
+                // Map이라는 자바의 기본 인터페이스의 HashMap 구현체 사용.
+                // 인터페이스는 어떤 기능을 가져야 할 지 일종의 설명서 같은 개념, 구현체는 그 설명서를 토대로 실제 동작을 구현한 것이라 보면 됨.
+                // Map 인터페이스는 <키, 값>의 형태로 특정 값을 저장하고, 찾을 수 있도록 만든 인터페이스이며, hashMap은 map 인터페이스에서 가장 보편적으로 사용되는 구현체.
                 Map<String, List<Cart>> groupedShop = new HashMap<>();
                 for (Cart cartItem : cartList) {
                     String shop = cartItem.menu.mShopName;
-                    // 카트에 담긴 요소(cartItem)의 메뉴.가게명을 뽑아, 키 값으로 만듬.
-                    // 키 값이 없다면 등록(groupedShop.computeIfAbsent(shop, k -> new ArrayList<>())
-                    // 이후 그 장바구니에 cart 요소 추가(.add(cartItem);)
+                    // 카트에 담긴 요소(cartItem)의 메뉴.가게명을 뽑아, 키 값으로 만듬. 해당 키 값을 토대로 그룹화(즉, 가게명을 토대로 그룹화)
+                    // coputeIfAbsent(shop, k -> new ArrayList<>())
+                    // shop(키 값)을 확인하여, 있으면 뒤의 문장(add.(cartItem)) 그대로 실행, 없으면 새로운 리스트 생성.
+                    // 여기서 k -> new ArrayList<>() 식으로 쓰는 것을 "람다 표현식"이라 함.
                     groupedShop.computeIfAbsent(shop, k -> new ArrayList<>()).add(cartItem);
                 }
 
