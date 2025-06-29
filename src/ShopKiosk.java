@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class ShopKiosk {
+abstract public class ShopKiosk {
     String shopName;
     int shopNumber;
     String category;

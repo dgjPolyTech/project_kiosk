@@ -21,7 +21,8 @@ public class Main {
                 for (Cart cartItem : cartList) {
                     String shop = cartItem.menu.mShopName;
                     // 카트에 담긴 요소(cartItem)의 메뉴.가게명을 뽑아, 키 값으로 만듬.
-                    // 없다면 키 값으로 등록하고, 이미 있다면 그 키에 추가.
+                    // 키 값이 없다면 등록(groupedShop.computeIfAbsent(shop, k -> new ArrayList<>())
+                    // 이후 그 장바구니에 cart 요소 추가(.add(cartItem);)
                     groupedShop.computeIfAbsent(shop, k -> new ArrayList<>()).add(cartItem);
                 }
 
@@ -30,8 +31,8 @@ public class Main {
                     System.out.println("장바구니가 비었습니다.");
                 } else {
                     for (String shopName : groupedShop.keySet()) {
-                        System.out.println("가게: " + shopName);
-                        for (Cart k : groupedShop.get(shopName)) {
+                        System.out.println("가게: " + shopName); // 만들어진 groupedShop hashmap에서, 키값(=ShopName)을 받아오고 출력
+                        for (Cart k : groupedShop.get(shopName)) { // 그 키 값을 토대로 groupedShope에서 검색
                             System.out.println("* " + k.menu.number + ")" + k.menu.name + " / " + k.menu.price + "원 x " + k.amount + "개");
                         }
                         System.out.println();
@@ -48,7 +49,7 @@ public class Main {
                         return;
                     case "C":
                     case "c":
-                        cartList.clear();
+                        cartList.clear(); // cartList 전체 초기화한다.
                         System.out.println("✅ 장바구니가 초기화되었습니다. \n");
                         return;
                     default:
@@ -77,8 +78,8 @@ public class Main {
         for (String shopName : groupedShop.keySet()) {
             System.out.println("가게: " + shopName);
             for (Cart k : groupedShop.get(shopName)) {
-                int subtotal = k.menu.price * k.amount;
-                total += subtotal;
+                int subtotal = k.menu.price * k.amount; // 해당 메뉴의 값*수량
+                total += subtotal; // 을 계산하여 총 결제 금액에 추가함.
                 System.out.println("* " + k.menu.number + ") " + k.menu.name + " / " + k.menu.price + "원 x " + k.amount + "개 = " + subtotal + "원");
             }
             System.out.println();
@@ -87,21 +88,24 @@ public class Main {
         System.out.println("=================================");
 
         System.out.print("결제를 진행하시겠습니까? (수락:Y/y, 거절:N/n) ==> ");
-        String confirm = bSc.nextLine().trim();
+        String confirm = bSc.nextLine();
 
-        if (!confirm.equalsIgnoreCase("Y")) {
+        if(confirm.equalsIgnoreCase("Y")) {
+            if (money >= total) {
+                money -= total;
+                cartList.clear();
+                System.out.println("✅ 결제가 완료되었습니다!");
+                System.out.println("남은 소지금: " + money + "원");
+            } else {
+                System.out.println("❗ 소지금이 부족합니다. 결제를 진행할 수 없습니다.");
+                System.out.println("필요 금액: " + total + "원 / 현재 소지금: " + money + "원");
+            }
+        } else if(confirm.equalsIgnoreCase("N")) {
             System.out.println("결제가 취소되었습니다. \n");
             return money;
-        }
-
-        if (money >= total) {
-            money -= total;
-            cartList.clear();
-            System.out.println("✅ 결제가 완료되었습니다!");
-            System.out.println("남은 소지금: " + money + "원");
         } else {
-            System.out.println("❗ 소지금이 부족합니다. 결제를 진행할 수 없습니다.");
-            System.out.println("필요 금액: " + total + "원 / 현재 소지금: " + money + "원");
+            System.out.println("❗ 올바른 값을 입력해주십시오.\n");
+            return money;
         }
 
         return money;
@@ -134,7 +138,7 @@ public class Main {
         System.out.println("도마트 푸드코트에 오신 걸 환영 합니다!\n");
 
         while (true) {
-            ShopKiosk nowShop = new ShopKiosk();
+            ShopKiosk nowShop; // 추상 클래스는 객체로 사용할 수 없고, 다음과 같이 선언만 해두는 식으로 쓸 수 있다.
 
             // 음식점 선택 화면
             while (true) {
@@ -190,21 +194,25 @@ public class Main {
                 String choice = sc.nextLine();
 
 
-                // choice 입력값으로 b 이외의 값 입력 시, 강제로 아래의 오류 실행.
+                // choice 입력값으로 B 입력 시 해당 while문을 빠져나가며 다시 위의 메뉴 선택 화면으로 돌아간다.
+                // 대소문자 구분은 필요 없음.
                 if (choice.equalsIgnoreCase("B")) break;
 
                 try {
+                    // 공백을 기준으로 입력값을 구분짓는다.
                     String[] choiceArr = choice.trim().split(" ");
+
+                    // 입력값이 2개가 아니면, 아래의 오류를 실행한다.
                     if (choiceArr.length != 2)
                         throw new IllegalArgumentException("❗ 입력 형식이 올바르지 않습니다. (예: 1 2)");
 
-                    int menuNum = Integer.parseInt(choiceArr[0]);
-                    int amount = Integer.parseInt(choiceArr[1]);
+                    int menuNum = Integer.parseInt(choiceArr[0]); // 메뉴 번호
+                    int amount = Integer.parseInt(choiceArr[1]); // 메뉴 수량
 
                     boolean found = false;
 
-                    for (Menu menuItem : nowShop.menuList) {
-                        if (menuItem.number == menuNum) {
+                    for (Menu menuItem : nowShop.menuList) { // 현재 해당하는 가게의 menuList를 흝는다.
+                        if (menuItem.number == menuNum) { // 동일한 메뉴 발견 시 cart 객체를 만들어 cartList에 추가한다.
                             Cart intoCart = new Cart();
                             intoCart.mShopNumber = menuItem.mShopNumber;
                             intoCart.mNumber = menuItem.number;
@@ -212,35 +220,36 @@ public class Main {
                             intoCart.menu = menuItem;
                             intoCart.amount = amount;
 
-                            boolean isDuplicate = false;
-                            for (Cart cartItem : m.cartList) {
-                                if (cartItem.menu == intoCart.menu) {
+                            boolean isDuplicate = false; // 이미 카트에 중복값이 있는 지 확인하는 변수
+
+                            for (Cart cartItem : m.cartList) { // 현재 카트(cartList)를 확인한다.
+                                if (cartItem.menu == intoCart.menu) { // 카트에 이미 같은 메뉴가 담겨있다면, 따로 추가하지 않고 수량만 증가시킨다.
                                     cartItem.amount += amount;
-                                    isDuplicate = true;
-                                    break;
+                                    isDuplicate = true; // 중복값 체크를 true로 변환.
+                                    break; // 이후 반복은 필요 없으므로 break;
                                 }
                             }
 
-                            if (!isDuplicate) {
+                            if (!isDuplicate) { // 중복값이 없다면, 신규 요소로 카트 안에 추가한다.
                                 m.cartList.add(intoCart);
                             }
 
-                            found = true;
+                            found = true; // 위 과정을 마쳤으면, found를 true로 변환한 뒤 해당 for문을 종료한다.
                             break;
                         }
                     }
 
-                    if (!found) { // 메뉴 판에 없는 메뉴 입력
+                    if (!found) { // 메뉴를 찾지 못했다는 의미이므로, 아래의 메시지를 출력한다.
                         System.out.println("❗ 해당 번호의 메뉴가 없습니다.");
                     } else {
                         System.out.println("✅ 장바구니에 물품이 담겼습니다. \n");
                     }
 
-                } catch (NumberFormatException e) {// 잘못된 숫자 입력
+                } catch (NumberFormatException e) {// 잘못된 숫자 입력 시
                     System.out.println("❗숫자만 입력해주세요. 예: 2 1");
-                } catch (IllegalArgumentException e) { //
+                } catch (IllegalArgumentException e) { // 입력 형식에 맞지 않을 시
                     System.out.println(e.getMessage());
-                } catch (Exception e) {
+                } catch (Exception e) {// 그 외 오류 발생 시
                     System.out.println("❗ 알 수 없는 오류가 발생했습니다. 다시 시도해주세요.");
                 }
             }
