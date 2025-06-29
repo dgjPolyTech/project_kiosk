@@ -48,36 +48,59 @@ public class Main {
                     case "C":
                     case "c":
                         kartList.clear();
-                        System.out.println("장바구니가 초기화되었습니다.");
-                        break;
+                        System.out.println("✅ 장바구니가 초기화되었습니다. \n");
+                        return;
                     default:
-                        System.out.println("입력값을 확인할 수 없습니다. 다시 입력해주십시오.");
+                        System.out.println("❗ 입력값을 확인할 수 없습니다. 다시 입력해주십시오.");
                 }
             }
         }
     }
 
     public int buy(int money) {
-        if (kartList.size() == 0) {
-            System.out.println("카트에 아무것도 담겨있지 않습니다.");
+        Scanner bSc = new Scanner(System.in);
+        if (kartList.isEmpty()) {
+            System.out.println("카트가 비어있습니다. \n");
             return money;
         }
 
-        int total = 0;
-
-        for (Kart k : kartList) {
-            total += k.menu.price * k.amount;
+        // ✅ 장바구니 내용 그룹화 출력
+        System.out.println("\n[결제 전 장바구니 확인]");
+        Map<String, List<Kart>> groupedShop = new HashMap<>();
+        for (Kart kartItem : kartList) {
+            String shop = kartItem.menu.mShopName;
+            groupedShop.computeIfAbsent(shop, k -> new ArrayList<>()).add(kartItem);
         }
 
+        int total = 0;
+        System.out.println("=================================");
+        for (String shopName : groupedShop.keySet()) {
+            System.out.println("가게: " + shopName);
+            for (Kart k : groupedShop.get(shopName)) {
+                int subtotal = k.menu.price * k.amount;
+                total += subtotal;
+                System.out.println("* " + k.menu.number + ") " + k.menu.name + " / " + k.menu.price + "원 x " + k.amount + "개 = " + subtotal + "원");
+            }
+            System.out.println();
+        }
         System.out.println("총 결제 금액: " + total + "원");
-        System.out.println("결제를 진행하시겠습니까?(수락:Y/y, 거절:N/n) ==> ");
+        System.out.println("=================================");
+
+        System.out.print("결제를 진행하시겠습니까? (수락:Y/y, 거절:N/n) ==> ");
+        String confirm = bSc.nextLine().trim();
+
+        if (!confirm.equalsIgnoreCase("Y")) {
+            System.out.println("결제가 취소되었습니다. \n");
+            return money;
+        }
 
         if (money >= total) {
             money -= total;
             kartList.clear();
-            System.out.println("결제가 완료되었습니다! 맛있는 식사 되십시오.");
+            System.out.println("✅ 결제가 완료되었습니다!");
+            System.out.println("남은 소지금: " + money + "원");
         } else {
-            System.out.println("소지금이 부족합니다. 카트를 확인해주십시오.");
+            System.out.println("❗ 소지금이 부족합니다. 결제를 진행할 수 없습니다.");
             System.out.println("필요 금액: " + total + "원 / 현재 소지금: " + money + "원");
         }
 
@@ -152,7 +175,7 @@ public class Main {
                         System.out.println("키오스크 종료");
                         System.exit(0);
                     default:
-                        System.out.println("입력값을 확인할 수 없습니다. 다시 입력해주십시오.");
+                        System.out.println("❗ 입력값을 확인할 수 없습니다. 다시 입력해주십시오.");
                         continue;
                 }
 
@@ -173,7 +196,7 @@ public class Main {
                 try {
                     String[] choiceArr = choice.trim().split(" ");
                     if (choiceArr.length != 2)
-                        throw new IllegalArgumentException("(E) 입력 형식이 올바르지 않습니다. 예: 1 2");
+                        throw new IllegalArgumentException("❗ 입력 형식이 올바르지 않습니다. (예: 1 2)");
 
                     int menuNum = Integer.parseInt(choiceArr[0]);
                     int amount = Integer.parseInt(choiceArr[1]);
@@ -208,17 +231,17 @@ public class Main {
                     }
 
                     if (!found) { // 메뉴 판에 없는 메뉴 입력
-                        System.out.println("(E) 해당 번호의 메뉴가 없습니다.");
+                        System.out.println("❗ 해당 번호의 메뉴가 없습니다.");
                     } else {
-                        m.showKartList(m.kartList);
+                        System.out.println("✅ 카트에 물품이 담겼습니다. \n");
                     }
 
                 } catch (NumberFormatException e) {// 잘못된 숫자 입력
-                    System.out.println("(E) 숫자만 입력해주세요. 예: 2 1");
+                    System.out.println("❗숫자만 입력해주세요. 예: 2 1");
                 } catch (IllegalArgumentException e) { //
                     System.out.println(e.getMessage());
                 } catch (Exception e) {
-                    System.out.println("(E) 알 수 없는 오류가 발생했습니다. 다시 시도해주세요.");
+                    System.out.println("❗ 알 수 없는 오류가 발생했습니다. 다시 시도해주세요.");
                 }
             }
         }
