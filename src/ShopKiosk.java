@@ -7,19 +7,8 @@ public class ShopKiosk {
 
     Menu menu = new Menu();
 
-    public void setMenu(String mName, int mNumber, int mPrice) {
-        this.menu.name = mName;
-        this.menu.number = mNumber;
-        this.menu.price = mPrice;
-    }
-
     // 가게 메뉴들이 들어갈 menuList
     ArrayList<Menu> menuList = new ArrayList<>();
-
-    public void getMenuList(){
-        System.out.println(this.menuList);
-    }
-
 
     // 하위 자식 클래스에서 메뉴를 추가하게 하기 위한 메소드.
     // main에서 직접 사용하는 것도 가능은 하다.
@@ -35,7 +24,7 @@ public class ShopKiosk {
     }
 
     public void showMenus(){
-        System.out.println("<"+this.shopName+">");
+        System.out.println("🇨🇳<"+this.shopName+">🇨🇳");
         System.out.println("====================");
         for(int i=0;i<menuList.size();i++){
             System.out.println(menuList.get(i).number+")"+menuList.get(i).name+"("+menuList.get(i).price+")");

@@ -18,4 +18,14 @@ public class ShopKiosk_KR extends ShopKiosk{
         idx++;
         addMenu(mName, idx, mPrice);
     }
+    
+    // ShopKiosk의 showMenus 오버라이딩
+    public void showMenus(){
+        System.out.println("<"+this.shopName+"> - 어머니의 손맛...");
+        System.out.println("====================");
+        for(int i=0;i<menuList.size();i++){
+            System.out.println(menuList.get(i).number+")"+menuList.get(i).name+"("+menuList.get(i).price+")");
+        }
+        System.out.println("====================");
+    }
 }

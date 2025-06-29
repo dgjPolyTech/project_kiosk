@@ -16,4 +16,13 @@ public class ShopKiosk_NY extends  ShopKiosk{
         idx++;
         addMenu(mName, idx, mPrice);
     }
+
+    public void showMenus(){
+        System.out.println("<"+this.shopName+"> - Enjoy Delicious Food!");
+        System.out.println("====================");
+        for(int i=0;i<menuList.size();i++){
+            System.out.println(menuList.get(i).number+")"+menuList.get(i).name+"("+menuList.get(i).price+")");
+        }
+        System.out.println("====================");
+    }
 }

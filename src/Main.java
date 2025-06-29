@@ -1,36 +1,37 @@
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class Main {
-    List<Kart> kartList = new ArrayList<>();
+    List<Cart> cartList = new ArrayList<>();
 
     public void showUI() {
-        System.out.println("[카트 확인: K/k] || [결재: G/g] || [프로그램 종료:X/x]");
+        System.out.println("[장바구니 확인: K/k] || [결재: G/g] || [프로그램 종료:X/x]");
     }
 
-    // 카트 목록 확인
-    public void showKartList(List<Kart> kartList) {
+    // 장바구니 목록 확인
+    public void showKartList(List<Cart> cartList) {
         Scanner scK = new Scanner(System.in);
 
-        if (kartList.size() == 0) {
-            System.out.println("카트에 아무것도 담겨있지 않습니다.");
+        if (cartList.size() == 0) {
+            System.out.println("❗장바구니에 아무것도 담겨있지 않습니다.");
         } else {
             System.out.println("[장바구니 목록]");
 
             while (true) {
-                Map<String, List<Kart>> groupedShop = new HashMap<>();
-                for (Kart kartItem : kartList) {
-                    String shop = kartItem.menu.mShopName;
-                    groupedShop.computeIfAbsent(shop, k -> new ArrayList<>()).add(kartItem);
+                Map<String, List<Cart>> groupedShop = new HashMap<>();
+                for (Cart cartItem : cartList) {
+                    String shop = cartItem.menu.mShopName;
+                    // 카트에 담긴 요소(cartItem)의 메뉴.가게명을 뽑아, 키 값으로 만듬.
+                    // 없다면 키 값으로 등록하고, 이미 있다면 그 키에 추가.
+                    groupedShop.computeIfAbsent(shop, k -> new ArrayList<>()).add(cartItem);
                 }
 
                 System.out.println("=================================");
                 if (groupedShop.isEmpty()) {
-                    System.out.println("카트가 비었습니다.");
+                    System.out.println("장바구니가 비었습니다.");
                 } else {
                     for (String shopName : groupedShop.keySet()) {
                         System.out.println("가게: " + shopName);
-                        for (Kart k : groupedShop.get(shopName)) {
+                        for (Cart k : groupedShop.get(shopName)) {
                             System.out.println("* " + k.menu.number + ")" + k.menu.name + " / " + k.menu.price + "원 x " + k.amount + "개");
                         }
                         System.out.println();
@@ -47,7 +48,7 @@ public class Main {
                         return;
                     case "C":
                     case "c":
-                        kartList.clear();
+                        cartList.clear();
                         System.out.println("✅ 장바구니가 초기화되었습니다. \n");
                         return;
                     default:
@@ -59,24 +60,23 @@ public class Main {
 
     public int buy(int money) {
         Scanner bSc = new Scanner(System.in);
-        if (kartList.isEmpty()) {
-            System.out.println("카트가 비어있습니다. \n");
+        if (cartList.isEmpty()) {
+            System.out.println("장바구니가 비어있습니다. \n");
             return money;
         }
 
-        // ✅ 장바구니 내용 그룹화 출력
         System.out.println("\n[결제 전 장바구니 확인]");
-        Map<String, List<Kart>> groupedShop = new HashMap<>();
-        for (Kart kartItem : kartList) {
-            String shop = kartItem.menu.mShopName;
-            groupedShop.computeIfAbsent(shop, k -> new ArrayList<>()).add(kartItem);
+        Map<String, List<Cart>> groupedShop = new HashMap<>();
+        for (Cart cartItem : cartList) {
+            String shop = cartItem.menu.mShopName;
+            groupedShop.computeIfAbsent(shop, k -> new ArrayList<>()).add(cartItem);
         }
 
         int total = 0;
         System.out.println("=================================");
         for (String shopName : groupedShop.keySet()) {
             System.out.println("가게: " + shopName);
-            for (Kart k : groupedShop.get(shopName)) {
+            for (Cart k : groupedShop.get(shopName)) {
                 int subtotal = k.menu.price * k.amount;
                 total += subtotal;
                 System.out.println("* " + k.menu.number + ") " + k.menu.name + " / " + k.menu.price + "원 x " + k.amount + "개 = " + subtotal + "원");
@@ -96,7 +96,7 @@ public class Main {
 
         if (money >= total) {
             money -= total;
-            kartList.clear();
+            cartList.clear();
             System.out.println("✅ 결제가 완료되었습니다!");
             System.out.println("남은 소지금: " + money + "원");
         } else {
@@ -164,7 +164,7 @@ public class Main {
                         break;
                     case "K":
                     case "k":
-                        m.showKartList(m.kartList);
+                        m.showKartList(m.cartList);
                         continue;
                     case "G":
                     case "g":
@@ -205,24 +205,24 @@ public class Main {
 
                     for (Menu menuItem : nowShop.menuList) {
                         if (menuItem.number == menuNum) {
-                            Kart intoKart = new Kart();
-                            intoKart.mShopNumber = menuItem.mShopNumber;
-                            intoKart.mNumber = menuItem.number;
-                            intoKart.sName = menuItem.mShopName;
-                            intoKart.menu = menuItem;
-                            intoKart.amount = amount;
+                            Cart intoCart = new Cart();
+                            intoCart.mShopNumber = menuItem.mShopNumber;
+                            intoCart.mNumber = menuItem.number;
+                            intoCart.sName = menuItem.mShopName;
+                            intoCart.menu = menuItem;
+                            intoCart.amount = amount;
 
                             boolean isDuplicate = false;
-                            for (Kart kartItem : m.kartList) {
-                                if (kartItem.menu == intoKart.menu) {
-                                    kartItem.amount += amount;
+                            for (Cart cartItem : m.cartList) {
+                                if (cartItem.menu == intoCart.menu) {
+                                    cartItem.amount += amount;
                                     isDuplicate = true;
                                     break;
                                 }
                             }
 
                             if (!isDuplicate) {
-                                m.kartList.add(intoKart);
+                                m.cartList.add(intoCart);
                             }
 
                             found = true;
@@ -233,7 +233,7 @@ public class Main {
                     if (!found) { // 메뉴 판에 없는 메뉴 입력
                         System.out.println("❗ 해당 번호의 메뉴가 없습니다.");
                     } else {
-                        System.out.println("✅ 카트에 물품이 담겼습니다. \n");
+                        System.out.println("✅ 장바구니에 물품이 담겼습니다. \n");
                     }
 
                 } catch (NumberFormatException e) {// 잘못된 숫자 입력

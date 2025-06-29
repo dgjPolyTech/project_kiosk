@@ -15,4 +15,13 @@ public class ShopKiosk_CN extends ShopKiosk {
         idx++;
         addMenu(mName, idx, mPrice);
     }
+
+    public void showMenus(){
+        System.out.println("<"+this.shopName+"> - 든든한 중화요리");
+        System.out.println("====================");
+        for(int i=0;i<menuList.size();i++){
+            System.out.println(menuList.get(i).number+")"+menuList.get(i).name+"("+menuList.get(i).price+")");
+        }
+        System.out.println("====================");
+    }
 }
