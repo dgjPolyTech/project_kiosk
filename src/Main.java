@@ -18,7 +18,6 @@ public class Main {
             System.out.println("[장바구니 목록]");
 
             while (true) {
-                // ✅ 최신 데이터를 기반으로 항상 다시 그룹핑
                 Map<String, List<Kart>> groupedShop = new HashMap<>();
                 for (Kart kartItem : kartList) {
                     String shop = kartItem.menu.mShopName;
@@ -58,9 +57,33 @@ public class Main {
         }
     }
 
+    public int buy(int money) {
+        if (kartList.size() == 0) {
+            System.out.println("카트에 아무것도 담겨있지 않습니다.");
+            return money;
+        }
 
-    public void buy() {
+        int total = 0;
+
+        for (Kart k : kartList) {
+            total += k.menu.price * k.amount;
+        }
+
+        System.out.println("총 결제 금액: " + total + "원");
+        System.out.println("결제를 진행하시겠습니까?(수락:Y/y, 거절:N/n) ==> ");
+
+        if (money >= total) {
+            money -= total;
+            kartList.clear();
+            System.out.println("결제가 완료되었습니다! 맛있는 식사 되십시오.");
+        } else {
+            System.out.println("소지금이 부족합니다. 카트를 확인해주십시오.");
+            System.out.println("필요 금액: " + total + "원 / 현재 소지금: " + money + "원");
+        }
+
+        return money;
     }
+
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -120,6 +143,10 @@ public class Main {
                     case "k":
                         m.showKartList(m.kartList);
                         continue;
+                    case "G":
+                    case "g":
+                        money = m.buy(money);
+                        continue;
                     case "X":
                     case "x":
                         System.out.println("키오스크 종료");
@@ -128,6 +155,7 @@ public class Main {
                         System.out.println("입력값을 확인할 수 없습니다. 다시 입력해주십시오.");
                         continue;
                 }
+
                 break;
             }
 
