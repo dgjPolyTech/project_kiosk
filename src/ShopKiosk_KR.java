@@ -1,4 +1,6 @@
 public class ShopKiosk_KR extends ShopKiosk{
+    int idx = 0;
+
     public ShopKiosk_KR() {
         this.shopName = "우리집 밥상";
         addMenu("비빔밥", 1, 5500);
