@@ -8,50 +8,70 @@ public class Main {
         System.out.println("[카트 확인: K/k] || [결재: G/g] || [프로그램 종료:X/x]");
     }
 
-    public void showKartList(List<Kart>  kartList){
-        if(kartList.size() == 0){
+    // 카트 목록 확인
+    public void showKartList(List<Kart> kartList) {
+        Scanner scK = new Scanner(System.in);
+
+        if (kartList.size() == 0) {
             System.out.println("카트에 아무것도 담겨있지 않습니다.");
         } else {
             System.out.println("[장바구니 목록]");
-            
-            // 가게 별로 그룹을 나눠 출력하기 위한 구문
-            Map<String, List<Kart>> groupedShop = new HashMap<>();
 
-            for (Kart kartItem : kartList) {
-                String shop = kartItem.menu.mShopName;
-
-                groupedShop.computeIfAbsent(shop, k -> new ArrayList<>()).add(kartItem);
-            }
-
-            for (String shopName : groupedShop.keySet()) {
-                System.out.println("가게: " + shopName);
-
-                for (Kart k : groupedShop.get(shopName)) {
-                    System.out.println(" - " + k.menu.name + " / " + k.menu.price + "원 x " + k.amount + "개");
+            while (true) {
+                // ✅ 최신 데이터를 기반으로 항상 다시 그룹핑
+                Map<String, List<Kart>> groupedShop = new HashMap<>();
+                for (Kart kartItem : kartList) {
+                    String shop = kartItem.menu.mShopName;
+                    groupedShop.computeIfAbsent(shop, k -> new ArrayList<>()).add(kartItem);
                 }
 
-                System.out.println();
+                System.out.println("=================================");
+                if (groupedShop.isEmpty()) {
+                    System.out.println("카트가 비었습니다.");
+                } else {
+                    for (String shopName : groupedShop.keySet()) {
+                        System.out.println("가게: " + shopName);
+                        for (Kart k : groupedShop.get(shopName)) {
+                            System.out.println("* " + k.menu.number + ")" + k.menu.name + " / " + k.menu.price + "원 x " + k.amount + "개");
+                        }
+                        System.out.println();
+                    }
+                }
+                System.out.println("=================================");
+                System.out.println("|| [확인 완료: B/b] || [완전 초기화: C/c] ||");
+
+                String choice = scK.nextLine();
+
+                switch (choice) {
+                    case "B":
+                    case "b":
+                        return;
+                    case "C":
+                    case "c":
+                        kartList.clear();
+                        System.out.println("장바구니가 초기화되었습니다.");
+                        break;
+                    default:
+                        System.out.println("입력값을 확인할 수 없습니다. 다시 입력해주십시오.");
+                }
             }
-//            for(int i=0;i<kartList.size();i++){
-//                System.out.println(kartList.get(i).menu.name);
-//            }
         }
     }
 
-    public void buy(){
 
+    public void buy() {
     }
 
     public static void main(String[] args) {
-        Main m = new Main();
         Scanner sc = new Scanner(System.in);
+        Main m = new Main();
         int money = 0;
 
         System.out.println("소지금을 입력해주십시오.(최소 10000원 이상)");
 
-        while(true){
+        while (true) {
             money = sc.nextInt();
-            if(money >= 10000){
+            if (money >= 10000) {
                 break;
             } else {
                 System.out.println("최소 10000원 이상의 금액을 입력해주십시오.");
@@ -67,24 +87,23 @@ public class Main {
 
         System.out.println("도마트 푸드코트에 오신 걸 환영 합니다!\n");
 
-        while(true){
+        while (true) {
             ShopKiosk nowShop = new ShopKiosk();
-            
+
             // 음식점 선택 화면
-            while(true){
+            while (true) {
                 System.out.println("=================================");
-                System.out.println(sKR.shopNumber+")"+sKR.shopName+"("+sKR.category+")");
-                System.out.println(sJP.shopNumber+")"+sJP.shopName+"("+sJP.category+")");
-                System.out.println(sCN.shopNumber+")"+sCN.shopName+"("+sCN.category+")");
-                System.out.println(sNY.shopNumber+")"+sNY.shopName+"("+sNY.category+")");
+                System.out.println(sKR.shopNumber + ")" + sKR.shopName + "(" + sKR.category + ")");
+                System.out.println(sJP.shopNumber + ")" + sJP.shopName + "(" + sJP.category + ")");
+                System.out.println(sCN.shopNumber + ")" + sCN.shopName + "(" + sCN.category + ")");
+                System.out.println(sNY.shopNumber + ")" + sNY.shopName + "(" + sNY.category + ")");
                 System.out.println("=================================");
                 m.showUI();
-                System.out.print("원하는 음식점의 번호 입력(현재 소지금:"+money+"원) ==> ");
+                System.out.print("원하는 음식점의 번호 입력(현재 소지금:" + money + "원) ==> ");
 
                 String next = sc.nextLine();
-                // 위에서 선택한 번호에 따라, 음식점 화면을 출력한다.
 
-                switch(next){
+                switch (next) {
                     case "1":
                         nowShop = sKR;
                         break;
@@ -97,70 +116,82 @@ public class Main {
                     case "4":
                         nowShop = sNY;
                         break;
-                    case "K", "k":
+                    case "K":
+                    case "k":
                         m.showKartList(m.kartList);
                         continue;
-                    case "X", "x":
+                    case "X":
+                    case "x":
                         System.out.println("키오스크 종료");
                         System.exit(0);
                     default:
                         System.out.println("입력값을 확인할 수 없습니다. 다시 입력해주십시오.");
                         continue;
                 }
-
                 break;
             }
 
             // 음식점 메뉴 선택 화면
-            while(true){
+            while (true) {
                 nowShop.showMenus();
-                //m.showUI();
                 System.out.println("[음식점 선택으로 돌아가기: B/b]");
-                System.out.print("메뉴와 수량을 띄어쓰기로 입력.(현재 소지금: "+money+"원) ==> ");
+                System.out.print("메뉴와 수량을 띄어쓰기로 입력.(현재 소지금: " + money + "원) ==> ");
                 String choice = sc.nextLine();
-                String[] choiceArr = choice.split(" "); // 배열 형식으로 메뉴/수량을 입력받는다.
-                try{
 
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                String choiceMenu = choiceArr[0]; // 선택한 메뉴 번호
-                String choiceAmount = choiceArr[1]; // 선택한 메뉴 수량
 
-                for(Menu menuItem : nowShop.menuList){
-                    if(menuItem.number == Integer.parseInt(choiceMenu)){
-                        Kart intoKart = new Kart();
-                        intoKart.sName = menuItem.mShopName;
-                        intoKart.menu = menuItem;
-                        intoKart.amount = Integer.parseInt(choiceAmount);
+                // choice 입력값으로 b 이외의 값 입력 시, 강제로 아래의 오류 실행.
+                if (choice.equalsIgnoreCase("B")) break;
 
-                        // 기존 카트에 이미 같은 메뉴가 담겨 있으면, 수량만 추가하기.
+                try {
+                    String[] choiceArr = choice.trim().split(" ");
+                    if (choiceArr.length != 2)
+                        throw new IllegalArgumentException("(E) 입력 형식이 올바르지 않습니다. 예: 1 2");
 
-                        boolean isDuplicate = false;
+                    int menuNum = Integer.parseInt(choiceArr[0]);
+                    int amount = Integer.parseInt(choiceArr[1]);
 
-                        for (Kart kartItem : m.kartList) {
-                            if (intoKart.menu == kartItem.menu) {
-                                kartItem.amount += Integer.parseInt(choiceAmount);
-                                isDuplicate = true;
-                                break;  // 더 볼 필요 없음
+                    boolean found = false;
+
+                    for (Menu menuItem : nowShop.menuList) {
+                        if (menuItem.number == menuNum) {
+                            Kart intoKart = new Kart();
+                            intoKart.mShopNumber = menuItem.mShopNumber;
+                            intoKart.mNumber = menuItem.number;
+                            intoKart.sName = menuItem.mShopName;
+                            intoKart.menu = menuItem;
+                            intoKart.amount = amount;
+
+                            boolean isDuplicate = false;
+                            for (Kart kartItem : m.kartList) {
+                                if (kartItem.menu == intoKart.menu) {
+                                    kartItem.amount += amount;
+                                    isDuplicate = true;
+                                    break;
+                                }
                             }
-                        }
 
-                        if (!isDuplicate) {
-                            m.kartList.add(intoKart);  // 반복문 밖에서 add 실행
+                            if (!isDuplicate) {
+                                m.kartList.add(intoKart);
+                            }
+
+                            found = true;
+                            break;
                         }
                     }
+
+                    if (!found) { // 메뉴 판에 없는 메뉴 입력
+                        System.out.println("(E) 해당 번호의 메뉴가 없습니다.");
+                    } else {
+                        m.showKartList(m.kartList);
+                    }
+
+                } catch (NumberFormatException e) {// 잘못된 숫자 입력
+                    System.out.println("(E) 숫자만 입력해주세요. 예: 2 1");
+                } catch (IllegalArgumentException e) { //
+                    System.out.println(e.getMessage());
+                } catch (Exception e) {
+                    System.out.println("(E) 알 수 없는 오류가 발생했습니다. 다시 시도해주세요.");
                 }
-
-                m.showKartList(m.kartList);
-
-//                try {
-//                    for(int i=0;i<nowShop.menuList.size();i++){
-//                        System.out.println(nowShop.menuList.get(i).toString());
-//                    }
-//                } catch {
-//
-//                }
             }
         }
     }
