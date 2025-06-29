@@ -3,6 +3,9 @@ public class ShopKiosk_KR extends ShopKiosk{
 
     public ShopKiosk_KR() {
         this.shopName = "우리집 밥상";
+        this.shopNumber = 1;
+        this.category = "한식";
+
         addMenu("비빔밥", 1, 5500);
         addMenu("부대찌개", 2, 9000);
         addMenu("불고기", 3, 10000);

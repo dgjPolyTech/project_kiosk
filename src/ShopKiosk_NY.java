@@ -3,6 +3,9 @@ public class ShopKiosk_NY extends  ShopKiosk{
 
     public ShopKiosk_NY() {
         this.shopName = "뉴욕 레스토랑";
+        this.shopNumber = 4;
+        this.category = "양식";
+
         addMenu("스파게티", 1, 10000);
         addMenu("햄버그 스테이크", 2, 12000);
         addMenu("치킨 & 맥주", 3, 16000);

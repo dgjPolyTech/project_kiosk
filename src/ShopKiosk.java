@@ -2,6 +2,8 @@ import java.util.ArrayList;
 
 public class ShopKiosk {
     String shopName;
+    int shopNumber;
+    String category;
 
     Menu menu = new Menu();
 
@@ -14,9 +16,10 @@ public class ShopKiosk {
     // 가게 메뉴들이 들어갈 menuList
     ArrayList<Menu> menuList = new ArrayList<>();
 
-    public Menu getMenu() {
-        return menu;
+    public void getMenuList(){
+        System.out.println(this.menuList);
     }
+
 
     // 하위 자식 클래스에서 메뉴를 추가하게 하기 위한 메소드.
     // main에서 직접 사용하는 것도 가능은 하다.
@@ -26,6 +29,7 @@ public class ShopKiosk {
         newMenu.name = name;
         newMenu.number = number;
         newMenu.price = price;
+        newMenu.mShopName = this.shopName;
 
         menuList.add(newMenu);
     }
