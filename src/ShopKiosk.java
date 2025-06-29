@@ -3,6 +3,8 @@ import java.util.ArrayList;
 public class ShopKiosk {
     String shopName;
 
+    int idx = 0;
+
     Menu menu = new Menu();
 
     public void setMenu(String mName, int mNumber, int mPrice) {
@@ -37,5 +39,6 @@ public class ShopKiosk {
             System.out.println(menuList.get(i).number+")"+menuList.get(i).name+"("+menuList.get(i).price+")");
         }
         System.out.println("====================");
+        System.out.println("메뉴 화면으로 돌아가기:B/키오스크 종료: Q");
     }
 }

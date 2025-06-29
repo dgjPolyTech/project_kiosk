@@ -1,4 +1,4 @@
-public class Cart {
+public class Kart {
     Menu menu;
     int amount;
 }
